@@ -2,6 +2,8 @@
 
 A userscript to adjust page layout of JSHint.com.
 
+![JSHint Layout Mod](https://f.cloud.github.com/assets/1231359/1015096/d0a00186-0bd0-11e3-8ef4-c6feccf74ca4.png)
+
 ## 简介
 
 这个用户脚本用于调整 JSHint.com 的网页布局，使之更适用于日常工作。
