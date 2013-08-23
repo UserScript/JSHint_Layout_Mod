@@ -5,28 +5,30 @@ _.ini = function () {
 		this.getElem();
 		this.modLayout();
 		this.autoResetMsg();
+		this.setOptionBox();
 	}
 };
 _.getElem = function () {
-	this.msgInfo = $.crElem('div');  //need to insert to alert area later.
+	this.msgInfo = $.crElem('div');  //will be inserted to alert area later.
 	this.msgError = $('.alert-error')[0];
 	this.msgSuccess = $('.alert-success')[0];
 	this.codeBox = $('.CodeMirror')[0];
 	this.optionBox = $('.editor > .options')[0];
-	this.reportBox = $('.editorArea ~ .report')[0];
+	this.reportBox = $('.editor > .report')[0];
 	this.btn = $('.editorArea > .controls button')[0];
 };
 _.modLayout = function () {
 	//fix main body
 	$.cssText += 'html {overflow-y:scroll;}';
-	$.cssText += 'body {height: auto; padding: 15px 0 20px;}';
+	$.cssText += 'body {height: auto; padding: 15px 0 30px;}';
 	$.cssText += 'body > .content {margin: 0;}';
 	$.cssText += 'body > .content:after {content:"";display:block;clear:both;height:0;}';
 	
 	//layout - page
 	$.cssText += 'body {width: 1620px; max-width: 1620px;}';
-	$.cssText += '.editorArea {float: left; width: 880px;}';
-	$.cssText += '.editorArea ~ .report {float: right; width: 680px;}';
+	$.cssText += '.editor {position: relative;}';
+	$.cssText += '.editor > .editorArea {float: left; width: 880px;}';
+	$.cssText += '.editor > .report {position: absolute; top: 0; right: 0; width: 680px;}';
 
 	//hide nav & header & footer
 	$.cssText += 'body > .navbar {display: none;}';
@@ -47,14 +49,20 @@ _.modLayout = function () {
 	$.cssText += '.editorArea > .alert-info {border-color: #3A87AD; padding-right: 14px;}';
 	$.cssText += '.editorArea > .alert-info a {float: right; white-space: nowrap; text-decoration: underline;}';
 	
-	//hide option
-	$.cssText += 'body > .content > .editor > .options {display: none;}';
+	//layout - option
+	$.cssText += '.editor > .options-switch {clear: both; width: 860px; padding: 20px 10px 5px; text-align: right;}';
+	$.cssText += '.editor > .options {clear: both; width: 848px; margin-bottom: 0; overflow: hidden;}';
+	$.cssText += '.editor > .options {border: 1px solid #ccc; background-color: #eee; padding: 10px 15px; border-radius: 5px;}';
+	$.cssText += '.editor > .options ul {width: 270px;}';
+	$.cssText += '.editor > .options li {margin-bottom: 5px;}';
+	$.cssText += '.editor > .options ul label {font-size: 12px;}';
+	$.cssText += '.editor > .options .more-options {float: right;}';
 	
 	//layout - report
-	$.cssText += '.editorArea ~ .report > h4:first-child {display: none;}';
-	$.cssText += '.editorArea ~ .report > h4 {margin-top: 0;}';
-	$.cssText += '.editorArea ~ .report .options-string {display: none;}';
-	$.cssText += '.editorArea ~ .report .documentation-link {display: none;}';
+	$.cssText += '.editor > .report > h4:first-child {display: none;}';
+	$.cssText += '.editor > .report > h4 {margin-top: 0;}';
+	$.cssText += '.editor > .report .options-string {display: none;}';
+	$.cssText += '.editor > .report .documentation-link {display: none;}';
 	
 	//lint btn
 	$.cssText += '.editorArea > .controls button {width:100%;height:60px;font-size:30px;padding:10px 0 12px;border-radius:8px;font-weight: 700;}';
@@ -68,12 +76,12 @@ _.autoResetMsg = function () {
 
 	//insert info bar, to avoid page jump
 	var msgInfo = this.msgInfo;
+	var msgError = this.msgError;
 	$.addClass(msgInfo, 'alert alert-info');
 	msgInfo.innerHTML = 'Ready to lint. Please paste your code below. <a href="http://userscripts.org/scripts/show/152538" target="_blank">JSHint Layout Mod</a>';
-	$.insBefore($('.editorArea')[0], msgInfo);
+	$.insertBefore(msgInfo, msgError);
 	
 	//remove link in error msg, to avoid page scroll
-	var msgError = this.msgError;
 	var html = msgError.innerHTML;
 	html = html.split('<a ')[0];
 	html += 'report on the right side.';
@@ -89,6 +97,40 @@ _.autoResetMsg = function () {
 	$.on(this.btn, 'click', function () {
 		$.hide(msgInfo);
 	});
+};
+
+_.setOptionBox = function () {
+	var _ns = this;
+	var texts = [
+		'- Options',
+		'+ Options',
+	];
+	var optionBox = this.optionBox;
+	
+	//set switch
+	var optionSwitch = $.crElem('div');
+	optionSwitch.className = 'options-switch';
+	
+	//set switch btn
+	var btn = $.crElem('a');
+	btn.href = '#toggle-option-box';
+	$.append(optionSwitch, btn);
+	btn.innerHTML = texts[1];
+	btn.isOpen = false;
+	btn.texts = texts;
+	$.on(btn, 'click', function (ev) {
+		this.blur();
+		ev.preventDefault();
+		var isOpen = this.isOpen;
+		this.isOpen = !isOpen;
+		this.innerHTML = this.texts[isOpen + 0];
+		$[isOpen ? 'hide' : 'show'](_ns.optionBox);
+	});
+	
+	//insert switch
+	this.optionSwitch = optionSwitch;
+	$.insertBefore(optionSwitch, optionBox);
+	$.hide(optionBox);
 };
 
 ////////////////////  ini  ////////////////////

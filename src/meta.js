@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name			JSHint_Layout_Mod
-// @version			1.4.20130822
+// @version			2.0.20130823
 // @namespace		cssmagic
 // @description		A userscript to adjust page layout of JSHint.com.
 // @icon			http://www.jshint.com/favicon.ico
